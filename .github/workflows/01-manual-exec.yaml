@@ -7,7 +7,7 @@ name: 'Execução Manual'
 # gatilho manual = wokflow_dispatch
 
 on:
-  wokflow_dispatch:
+  workflow_dispatch:
 
 # tarefas dentro da pipeline = jobs
 jobs:
