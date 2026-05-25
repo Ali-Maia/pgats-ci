@@ -54,7 +54,7 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with: 
-          message: |
+          args: |
             ✅ **Pipeline Concluída com Sucesso!**
             Repositório: `${{ github.repository }}`
 
@@ -68,7 +68,7 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
-          message: |
+          args: |
             ❎ **A Pipeline Não Foi Concluída!**
             Repositório: `${{ github.repository }}`
 
