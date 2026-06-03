@@ -1,0 +1,69 @@
+# nome da pipeline
+name: 'Self Hosted Test'
+
+# gatilho manual
+on:
+  workflow_dispatch:
+
+# tarefas
+jobs:
+  # nome do job
+  e2e-tests:
+    # maquina onde vai rodas os jobs
+    runs-on: self-Hosted
+
+    # passos do job
+    steps:
+      # clone do projeto
+      - uses: actions/checkout@v4
+
+      # instalção do node
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+
+      # instalação do Yarn
+      - name: Instalando Yarn
+        run: npm install -g yarn
+
+      # instalação das dependências
+      - name: Instalando dependências
+        run: yarn
+
+      #instalação dos Browsers do Playwright
+      - name: Instalando Browsers do Playwright
+        run: yarn playwright install
+
+      #executar os testes e2e
+      - name: Executando testes e2e
+        run: yarn run e2e
+
+      #-----------------------------------------------------------------
+      # Enviar um aviso via Discord
+  notificacao_sucesso:
+    needs: e2e-tests
+    if: success()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enviar notificação de sucesso para o Discord
+        uses:  Ilshidur/action-discord@0.3.2
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with: 
+          args: |
+            ✅ **Pipeline Concluída com Sucesso!**
+            Repositório: `${{ github.repository }}`
+
+  notificacao_falha:
+    needs: e2e-tests
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enviar notificação de falha para o Discord
+        uses:  Ilshidur/action-discord@0.3.2
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: |
+            ❎ **A Pipeline Não Foi Concluída!**
+            Repositório: `${{ github.repository }}`
